@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useGallery } from "../../hooks/useGallery";
 import ImageCard from "./ImageCard";
+import { useAppStore } from "../../store/useAppStore";
 
 export default function GalleryGrid() {
   const [page, setPage] = useState(1);
@@ -8,15 +9,18 @@ export default function GalleryGrid() {
   const loadMoreRef = useRef(null);
   const isFetchingRef = useRef(false);
 
+  const addImages = useAppStore((s) => s.addImages);
+
   const { data, isLoading } = useGallery(page);
 
-  // Append images when data changes
+  // Append images + store globally
   useEffect(() => {
     if (data && data.length > 0) {
       setImages((prev) => [...prev, ...data]);
+      addImages(data); // 🔥 store images by id for Feed "view"
       isFetchingRef.current = false;
     }
-  }, [data]);
+  }, [data, addImages]);
 
   // Infinite scroll observer
   useEffect(() => {
@@ -46,7 +50,7 @@ export default function GalleryGrid() {
 
   return (
     <>
-      {/* Masonry layout */}
+      {/* Pinterest / Masonry layout */}
       <div className="columns-1 sm:columns-2 md:columns-3 gap-4 space-y-4">
         {images.map((img) => (
           <ImageCard key={img.id} image={img} />
