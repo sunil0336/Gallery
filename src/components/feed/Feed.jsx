@@ -16,12 +16,15 @@ export default function Feed() {
         />
       ))}
 
-      {data?.comments?.map(c => (
-        <FeedItem
-          key={c.id}
-          text={`${c.user} commented`}
-        />
-      ))}
+      {data?.comments?.map((c) => (
+  <FeedItem
+    key={c.id}
+    text={`${c.user} commented: "${c.text.slice(0, 20)}${
+      c.text.length > 20 ? "..." : ""
+    }"`}
+  />
+))}
+
     </div>
   );
 }
